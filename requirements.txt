@@ -1,0 +1,8 @@
+flask
+flask-pymongo
+flask-cors
+pymongo
+requests
+python-dotenv
+mongoengine
+gunicorn
