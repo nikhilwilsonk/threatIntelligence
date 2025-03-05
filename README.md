@@ -1,4 +1,4 @@
-# URL Threat Analyzer 🔍🛡️
+# URL Threat Analyzer
 
 A simple web tool to analyze URLs for potential security threats using VirusTotal and Shodan intelligence.
 ---
