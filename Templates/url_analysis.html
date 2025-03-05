@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>URL Threat Analysis</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>URL Threat Analysis</h1>
+    <form id="url-form">
+        <input type="url" id="url-input" placeholder="Enter URL to analyze" required>
+        <button type="submit">Analyze</button>
+    </form>
+    
+    <div id="results"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#url-form').on('submit', function(e) {
+                e.preventDefault();
+                var url = $('#url-input').val();
+                
+                $.ajax({
+                    url: '/api/threats/url-analysis',
+                    method: 'POST',
+                    data: {url: url},
+                    success: function(response) {
+                        $('#results').html(`
+                            <h2>Analysis Results</h2>
+                            <pre>${JSON.stringify(response, null, 2)}</pre>
+                        `);
+                    },
+                    error: function(xhr) {
+                        $('#results').html('Error analyzing URL');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
