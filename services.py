@@ -16,7 +16,7 @@ class OSINTCollector:
             parsed_url = urlparse(url)
             domain = parsed_url.netloc
 
-            vt_result = self.virustotal_url_analysis(url)
+            vt_result = self.collect_virustotal_threats(url)
             shodan_result = self.shodan_host_analysis(domain)
             combined_result = {
                 'url': url,
@@ -38,12 +38,8 @@ class OSINTCollector:
             headers = {
                 'x-apikey': Config.VIRUSTOTAL_API_KEY
             }
-            url_id = requests.get(
-                f'https://www.virustotal.com/api/v3/urls/{url_encode}',
-                headers=headers
-            ).json()
             analysis_response = requests.get(
-                f'https://www.virustotal.com/api/v3/analyses/{url_id["data"]["id"]}',
+                f'https://www.virustotal.com/api/v3/analyses/{url_encode}',
                 headers=headers
             ).json()
             return {

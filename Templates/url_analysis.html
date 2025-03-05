@@ -3,6 +3,19 @@
 <head>
     <title>URL Threat Analysis</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        #results { margin-top: 20px; background-color: #f4f4f4; padding: 15px; border-radius: 5px; }
+        .risk-score { 
+            font-weight: bold; 
+            color: white; 
+            padding: 5px 10px; 
+            border-radius: 3px; 
+        }
+        .low-risk { background-color: green; }
+        .medium-risk { background-color: orange; }
+        .high-risk { background-color: red; }
+    </style>
 </head>
 <body>
     <h1>URL Threat Analysis</h1>
@@ -20,14 +33,37 @@
                 var url = $('#url-input').val();
                 
                 $.ajax({
-                    url: '/api/threats/url-analysis',
+                    url: '/api/url-analysis',
                     method: 'POST',
-                    data: {url: url},
+                    contentType: 'application/json',
+                    data: JSON.stringify({url: url}),
                     success: function(response) {
-                        $('#results').html(`
+                        let riskClass = 'low-risk';
+                        if (response.overall_risk_score > 7) riskClass = 'high-risk';
+                        else if (response.overall_risk_score > 3) riskClass = 'medium-risk';
+
+                        let resultsHtml = `
                             <h2>Analysis Results</h2>
-                            <pre>${JSON.stringify(response, null, 2)}</pre>
-                        `);
+                            <p>URL: ${response.url}</p>
+                            <p>Domain: ${response.domain}</p>
+                            <p>Risk Score: <span class="risk-score ${riskClass}">${response.overall_risk_score}/10</span></p>
+                            
+                            <h3>VirusTotal Results</h3>
+                            <ul>
+                                <li>Malicious Detections: ${response.virustotal.malicious_count}</li>
+                                <li>Suspicious Detections: ${response.virustotal.suspicious_count}</li>
+                                <li>Harmless Detections: ${response.virustotal.harmless_count}</li>
+                            </ul>
+                            
+                            <h3>Shodan Analysis</h3>
+                            <ul>
+                                <li>IP: ${response.shodan.ip || 'N/A'}</li>
+                                <li>Open Ports: ${response.shodan.total_ports_open}</li>
+                                <li>Country: ${response.shodan.country}</li>
+                                <li>Organization: ${response.shodan.organization}</li>
+                            </ul>
+                        `;
+                        $('#results').html(resultsHtml);
                     },
                     error: function(xhr) {
                         $('#results').html('Error analyzing URL');

@@ -8,3 +8,5 @@ class Config:
 
     MONGODB_URI = os.getenv('MONGODB_URI', 'mongodb://localhost:27017')
     DATABASE_NAME = 'threat_intelligence_db'
+
+    LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
